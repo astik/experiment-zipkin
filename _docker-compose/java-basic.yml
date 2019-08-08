@@ -1,0 +1,24 @@
+version: '3.2'
+
+services:
+  # The zipkin process services the UI, and also exposes a POST endpoint that
+  # instrumentation can send trace data to. Scribe is disabled by default.
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+
+  java-basic-frontend:
+    build: ../java-basic-frontend
+    container_name: java-basic-frontend
+    environment:
+      - spring.application.name=Java basic frontend
+      - server.port=8080
+      - logging.level.fr=DEBUG
+      - spring.zipkin.baseUrl=http://zipkin:9411
+    ports:
+      - "8080:8080"
+
+
