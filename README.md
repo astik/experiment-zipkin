@@ -11,11 +11,11 @@ Zipkin allows tracing calls into a distributed system.
 
 - HTTP call
 
-|        | direct call | nested call |
-| ------ | :---------: | :---------: |
-| Java   |      x      |      x      |
-| NodeJS |             |             |
-| PHP    |             |             |
+|        |  direct call   |   nested call    |
+| ------ | :------------: | :--------------: |
+| Java   | x (Spring MVC) | x (RestTemplate) |
+| NodeJS |                |                  |
+| PHP    |                |                  |
 
 - Message queue
 
@@ -38,7 +38,7 @@ Zipkin allows tracing calls into a distributed system.
 ### Java-basic
 
 This demo illustrates the simpliest use case : a java application acting as a web server.
-All call to the endpoint are traced into zipking
+All call to the endpoint are traced into zipking.
 
 ```shell
 docker-compose -f _docker-compose/java-basic.yml up
@@ -55,3 +55,24 @@ Calling _java-basic-frontend_ gets you a serialized date.
 This simple HTTP call is traced inside Zipkin.
 
 ### Java-resttemplate
+
+This demo illustrates nested HTTP calls in java using RestTemplate.
+Once the main endpoint is called, it will call another service.
+All call to any endpoint are traced into zipking.
+
+```shell
+docker-compose -f _docker-compose/java-resttemplate.yml up
+```
+
+Services availables :
+
+| Service name               | URL                       |
+| -------------------------- | ------------------------- |
+| zipkin                     | http://p-nan-roseau:9411  |
+| java-basic-frontend        | http://p-nan-roseau:8081/ |
+| java-resttemplate-frontend | http://p-nan-roseau:8080/ |
+
+Calling _java-resttemplate-frontend_ will call _java-basic-frontend_.
+Then a serialized date is brought back from _java-basic-frontend_ to _java-resttemplate-frontend_ and then to user.
+All HTTP calls are traced inside Zipkin.
+The server acting as backend for the nested HTTP call is the one used in the _Java-basic_ demo.
