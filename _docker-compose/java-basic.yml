@@ -1,10 +1,10 @@
-version: '3.2'
+version: "3.2"
 
 services:
   # The zipkin process services the UI, and also exposes a POST endpoint that
   # instrumentation can send trace data to. Scribe is disabled by default.
   zipkin:
-    image: openzipkin/zipkin
+    image: openzipkin/zipkin:2.15.0
     container_name: zipkin
     ports:
       # Port used for the Zipkin UI and HTTP Api
@@ -20,5 +20,5 @@ services:
       - spring.zipkin.baseUrl=http://zipkin:9411
     ports:
       - "8080:8080"
-
-
+    depends_on:
+      - zipkin

@@ -1,0 +1,50 @@
+version: "3.2"
+
+services:
+  # The zipkin process services the UI, and also exposes a POST endpoint that
+  # instrumentation can send trace data to. Scribe is disabled by default.
+  zipkin:
+    image: openzipkin/zipkin:2.15.0
+    container_name: zipkin
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+
+  activemq:
+    image: webcenter/activemq:5.14.3
+    container_name: activemq
+    ports:
+      # Port used for the ActiveMQ UI
+      - 8161:8161
+      # Port used for the ActiveMQ message handling
+      - 61616:61616
+      - 61613:61613
+
+  java-activemq-frontend:
+    build: ../java-activemq-frontend
+    container_name: java-activemq-frontend
+    environment:
+      - spring.application.name=Java ActiveMQ frontend
+      - server.port=8080
+      - logging.level.fr=DEBUG
+      - spring.zipkin.baseUrl=http://zipkin:9411
+      - spring.activemq.broker-url=tcp://activemq:61616
+      - demo.messageQueueName=my-message-queue
+    ports:
+      - "8080:8080"
+    depends_on:
+      - zipkin
+      - activemq
+
+  java-activemq-consumer:
+    build: ../java-activemq-consumer
+    container_name: java-activemq-consumer
+    environment:
+      - spring.application.name=Java ActiveMQ consumer
+      - logging.level.fr=DEBUG
+      - spring.zipkin.baseUrl=http://zipkin:9411
+      - spring.activemq.broker-url=tcp://activemq:61616
+      - demo.messageQueueName=my-message-queue
+    depends_on:
+      - zipkin
+      - activemq
