@@ -11,16 +11,17 @@ Zipkin allows tracing calls into a distributed system.
 
 - HTTP call
 
-|        |  direct call   |   nested call    |
-| ------ | :------------: | :--------------: |
-| Java   | x (Spring MVC) | x (RestTemplate) |
-| NodeJS |                |                  |
-| PHP    |                |                  |
+|        | direct call     | nested call       |
+| ------ | --------------- | ----------------- |
+| Java   | with Spring MVC | with RestTemplate |
+|        |                 | with HttpClient   |
+| NodeJS |                 |                   |
+| PHP    |                 |                   |
 
 - Message queue
 
 |        | ActiveMQ | Kafka |
-| ------ | :------: | :---: |
+| ------ | -------- | ----- |
 | Java   |          |       |
 | NodeJS |          |       |
 | PHP    |          |       |
@@ -28,7 +29,7 @@ Zipkin allows tracing calls into a distributed system.
 - Database
 
 |        | MySQL |
-| ------ | :---: |
+| ------ | ----- |
 | Java   |       |
 | NodeJS |       |
 | PHP    |       |
@@ -46,10 +47,10 @@ docker-compose -f _docker-compose/java-basic.yml up
 
 Services availables :
 
-| Service name        | URL                       |
-| ------------------- | ------------------------- |
-| zipkin              | http://p-nan-roseau:9411  |
-| java-basic-frontend | http://p-nan-roseau:8080/ |
+| Service name        | URL                      |
+| ------------------- | ------------------------ |
+| zipkin              | http://p-nan-roseau:9411 |
+| java-basic-frontend | http://p-nan-roseau:8080 |
 
 Calling _java-basic-frontend_ gets you a serialized date.
 This simple HTTP call is traced inside Zipkin.
@@ -66,13 +67,28 @@ docker-compose -f _docker-compose/java-resttemplate.yml up
 
 Services availables :
 
-| Service name               | URL                       |
-| -------------------------- | ------------------------- |
-| zipkin                     | http://p-nan-roseau:9411  |
-| java-basic-frontend        | http://p-nan-roseau:8081/ |
-| java-resttemplate-frontend | http://p-nan-roseau:8080/ |
+| Service name               | URL                      |
+| -------------------------- | ------------------------ |
+| zipkin                     | http://p-nan-roseau:9411 |
+| java-basic-frontend        | http://p-nan-roseau:8081 |
+| java-resttemplate-frontend | http://p-nan-roseau:8080 |
 
 Calling _java-resttemplate-frontend_ will call _java-basic-frontend_.
 Then a serialized date is brought back from _java-basic-frontend_ to _java-resttemplate-frontend_ and then to user.
 All HTTP calls are traced inside Zipkin.
-The server acting as backend for the nested HTTP call is the one used in the _Java-basic_ demo.
+The server acting as backend for the nested HTTP call is the one used in the _java-basic_ demo.
+
+### Java-httpclient
+
+This demo is the same as the _java-resttemplate_ one.
+
+Services availables :
+
+| Service name             | URL                      |
+| ------------------------ | ------------------------ |
+| zipkin                   | http://p-nan-roseau:9411 |
+| java-basic-frontend      | http://p-nan-roseau:8081 |
+| java-httpclient-frontend | http://p-nan-roseau:8080 |
+
+Only the implementation for the nested call is modified.
+Instead of using Spring's RestTemplate, Apache's HttpClient is used.
