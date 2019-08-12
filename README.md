@@ -152,3 +152,28 @@ Services availables :
 
 It would have been great to be able use _docker-compose scale_ to scale up (or down) _java-activemq-consumer_.
 But it does not seem to have a simple way to have container ID as environment variable (in order to change application name for demo's purpose).
+
+### Java-kafka
+
+This demo illustrates how Spring sleuth decorates _KafkaTemplate_ and _KafkaListener_.
+
+```shell
+docker-compose -f _docker-compose/java-kafka.yml up
+```
+
+Services availables :
+
+| Service name                 | URL                      |
+| ---------------------------- | ------------------------ |
+| zipkin                       | http://p-nan-roseau:9411 |
+| kafka                        | not reachable            |
+| zookeeper (needed for kafka) | not reachable            |
+| java-activemq-frontend       | http://p-nan-roseau:8080 |
+| java-activemq-consumer       | not reachable            |
+
+Calling java-kafka-frontend will send a message onto the message queue (topic is _topicBackend_).
+Frontend service returns the raw Kafka result from the sending.
+A java application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _backend_).
+Consumption is very simple, it will dump message on the standard output.
+Sending and consuming message are traced through Zipkin.
+For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
