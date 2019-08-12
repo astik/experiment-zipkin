@@ -1,0 +1,5 @@
+DEBUG=true
+zipkinBaseUrl='http://p-nan-roseau:9411'
+serviceName='NodeJS basic frontend'
+serverPort=9000
+npm run start

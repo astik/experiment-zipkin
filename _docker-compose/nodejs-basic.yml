@@ -1,0 +1,24 @@
+version: "3.2"
+
+services:
+  # The zipkin process services the UI, and also exposes a POST endpoint that
+  # instrumentation can send trace data to. Scribe is disabled by default.
+  zipkin:
+    image: openzipkin/zipkin:2.15.0
+    container_name: zipkin
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+
+  nodejs-basic-frontend:
+    build: ../nodejs-basic-frontend
+    container_name: nodejs-basic-frontend
+    environment:
+      - SERVICE_NAME='NodeJS basic frontend'
+      - SERVER_PORT=9000
+      - DEBUG=true
+      - ZIPKIN_BASE_URL=http://zipkin:9411
+    ports:
+      - "9000:9000"
+    depends_on:
+      - zipkin

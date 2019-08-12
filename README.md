@@ -22,19 +22,19 @@ This project is not at all about ho to manage system element, it is only about c
 
 - Message queue producer
 
-|        | ActiveMQ                   | Kafka |
-| ------ | -------------------------- | ----- |
-| Java   | with Spring Sleuth and JMS |       |
-| NodeJS |                            |       |
-| PHP    |                            |       |
+|        | ActiveMQ                   | RabbitMQ | Kafka                      |
+| ------ | -------------------------- | -------- | -------------------------- |
+| Java   | with Spring Sleuth and JMS |          | with Spring Sleuth and JMS |
+| NodeJS |                            |          |
+| PHP    |                            |          |                            |
 
 - Message queue consumer
 
-|        | ActiveMQ                   | RabbitMQ | Kafka |
-| ------ | -------------------------- | -------- | ----- |
-| Java   | with Spring Sleuth and JMS |          |       |
-| NodeJS |                            |          |       |
-| PHP    |                            |          |       |
+|        | ActiveMQ                   | RabbitMQ | Kafka                      |
+| ------ | -------------------------- | -------- | -------------------------- |
+| Java   | with Spring Sleuth and JMS |          | with Spring Sleuth and JMS |
+| NodeJS |                            |          |                            |
+| PHP    |                            |          |                            |
 
 - Database
 
@@ -49,7 +49,7 @@ This project is not at all about ho to manage system element, it is only about c
 ### Java-basic
 
 This demo illustrates the simpliest use case : a java application acting as a web server.
-All call to the endpoint are traced into zipking.
+All calls to the endpoint are traced into zipking.
 
 ```shell
 docker-compose -f _docker-compose/java-basic.yml up
@@ -69,7 +69,7 @@ This simple HTTP call is traced inside Zipkin.
 
 This demo illustrates nested HTTP calls in java using RestTemplate.
 Once the main endpoint is called, it will call another service.
-All call to any endpoint are traced into zipking.
+All calls to any endpoint are traced into zipking.
 
 ```shell
 docker-compose -f _docker-compose/java-resttemplate.yml up
@@ -177,3 +177,29 @@ A java application is defined to consume message from the queue (topic is _topic
 Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
+
+### NodeJS-basic
+
+This demo illustrates the simpliest use case : a NodeJS application acting as a web server (_express_).
+All calls to the endpoint are traced into zipking.
+
+```shell
+docker-compose -f _docker-compose/nodejs-basic.yml up
+```
+
+Services availables :
+
+| Service name          | URL                      |
+| --------------------- | ------------------------ |
+| zipkin                | http://p-nan-roseau:9411 |
+| nodejs-basic-frontend | http://p-nan-roseau:9000 |
+
+Calling _nodejs-basic-frontend_ gets you a serialized date.
+This simple HTTP call is traced inside Zipkin.
+As debug is enabled for the demo, you can see details for the HTTP call to zipkin.
+
+## Documentation
+
+- example for Java Spring : https://github.com/openzipkin/sleuth-webmvc-example
+- tools and example for NodeJS : https://github.com/openzipkin/zipkin-js-example
+- tools and example for PHP : https://github.com/openzipkin/zipkin-php
