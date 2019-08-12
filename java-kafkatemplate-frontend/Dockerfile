@@ -1,7 +1,9 @@
 FROM maven:3.6.1-jdk-8-slim AS build  
-COPY src /usr/src/app/src  
-COPY pom.xml /usr/src/app  
-RUN mvn -f /usr/src/app/pom.xml clean package
+WORKDIR /usr/src/app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src src
+RUN mvn package
 
 FROM gcr.io/distroless/java  
 COPY --from=build /usr/src/app/target/java-kafkatemplate-frontend-1.0.0-SNAPSHOT.jar /usr/app/java-kafkatemplate-frontend.jar  
