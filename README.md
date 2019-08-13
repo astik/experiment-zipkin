@@ -205,7 +205,7 @@ Once the main endpoint is called, it will call another service.
 All calls to any endpoint are traced into Zipkin.
 
 ```shell
-docker-compose -f _docker-compose/java-resttemplate.yml up
+docker-compose -f _docker-compose/nodejs-axios.yml up
 ```
 
 Services availables :
