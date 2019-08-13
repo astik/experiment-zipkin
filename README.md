@@ -17,7 +17,7 @@ This project is not at all about ho to manage system element, it is only about c
 | ------ | --------------- | ----------------- |
 | Java   | with Spring MVC | with RestTemplate |
 |        |                 | with HttpClient   |
-| NodeJS |                 |                   |
+| NodeJS | with Express    | with Axios        |
 | PHP    |                 |                   |
 
 - Message queue producer
@@ -48,8 +48,8 @@ This project is not at all about ho to manage system element, it is only about c
 
 ### Java-basic
 
-This demo illustrates the simpliest use case : a java application acting as a web server.
-All calls to the endpoint are traced into zipking.
+This demo illustrates the simpliest use case : a Java application acting as a web server.
+All calls to the endpoint are traced into Zipkin.
 
 ```shell
 docker-compose -f _docker-compose/java-basic.yml up
@@ -67,9 +67,9 @@ This simple HTTP call is traced inside Zipkin.
 
 ### Java-resttemplate
 
-This demo illustrates nested HTTP calls in java using RestTemplate.
+This demo illustrates nested HTTP calls in Java using RestTemplate.
 Once the main endpoint is called, it will call another service.
-All calls to any endpoint are traced into zipking.
+All calls to any endpoint are traced into Zipkin.
 
 ```shell
 docker-compose -f _docker-compose/java-resttemplate.yml up
@@ -126,7 +126,7 @@ Services availables :
 
 Calling java-activemq-frontend will send a message onto the message queue.
 You can check that the message is correctly sent through ActiveMQ UI (default credentials : admin/admin).
-A java application is defined to consume message from the queue.
+A Java application is defined to consume message from the queue.
 Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-activemq-frontend_, you should observe 3 spans : two for _java-activemq-frontend_ endpoint and its sending to the queue and one for _java-activemq-consumer_ message consumption.
@@ -173,7 +173,7 @@ Services availables :
 
 Calling java-kafka-frontend will send a message onto the message queue (topic is _topicBackend_).
 Frontend service returns the raw Kafka result from the sending.
-A java application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _backend_).
+A Java application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _backend_).
 Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
@@ -181,7 +181,7 @@ For each call on _java-kafka-frontend_, you should observe 4 spans : two for _ja
 ### NodeJS-basic
 
 This demo illustrates the simpliest use case : a NodeJS application acting as a web server (_express_).
-All calls to the endpoint are traced into zipking.
+All calls to the endpoint are traced into Zipkin.
 
 ```shell
 docker-compose -f _docker-compose/nodejs-basic.yml up
@@ -196,10 +196,38 @@ Services availables :
 
 Calling _nodejs-basic-frontend_ gets you a serialized date.
 This simple HTTP call is traced inside Zipkin.
-As debug is enabled for the demo, you can see details for the HTTP call to zipkin.
+As debug is enabled for the demo, you can see details for the HTTP call to Zipkin.
+
+### NodeJS-axios
+
+This demo illustrates nested HTTP calls in NodeJS using Axios.
+Once the main endpoint is called, it will call another service.
+All calls to any endpoint are traced into Zipkin.
+
+```shell
+docker-compose -f _docker-compose/java-resttemplate.yml up
+```
+
+Services availables :
+
+| Service name          | URL                      |
+| --------------------- | ------------------------ |
+| zipkin                | http://p-nan-roseau:9411 |
+| nodejs-basic-frontend | http://p-nan-roseau:9001 |
+| nodejs-axios-frontend | http://p-nan-roseau:9000 |
+
+Calling _nodejs-axios-frontend_ will call _nodejs-basic-frontend_.
+Then a serialized date is brought back from _nodejs-basic-frontend_ to _nodejs-axios-frontend_ and then to user.
+All HTTP calls are traced inside Zipkin.
+The server acting as backend for the nested HTTP call is the one used in the _nodejs-basic_ demo.
+
+Bonus, you can try the fibonacci endpoint to trigger latency :
+
+- http://p-nan-roseau:9000/fibonacci?count=40
 
 ## Documentation
 
+- introdution to distributed tracing : https://speakerdeck.com/adriancole/introduction-to-distributed-tracing-and-zipkin-at-devopsdays-singapore
 - example for Java Spring : https://github.com/openzipkin/sleuth-webmvc-example
 - tools and example for NodeJS : https://github.com/openzipkin/zipkin-js-example
 - tools and example for PHP : https://github.com/openzipkin/zipkin-php

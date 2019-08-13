@@ -15,10 +15,25 @@ services:
     container_name: nodejs-basic-frontend
     environment:
       - SERVICE_NAME=NodeJS basic frontend
+      - SERVER_PORT=9001
+      - DEBUG=true
+      - ZIPKIN_BASE_URL=http://zipkin:9411
+    ports:
+      - "9001:9001"
+    depends_on:
+      - zipkin
+
+  nodejs-axios-frontend:
+    build: ../nodejs-axios-frontend
+    container_name: nodejs-axios-frontend
+    environment:
+      - SERVICE_NAME=NodeJS axios frontend
       - SERVER_PORT=9000
       - DEBUG=true
       - ZIPKIN_BASE_URL=http://zipkin:9411
+      - REMOTE_SERVICE_URL=http://nodejs-basic-frontend:9001
     ports:
       - "9000:9000"
     depends_on:
       - zipkin
+      - nodejs-basic-frontend
