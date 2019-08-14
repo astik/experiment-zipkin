@@ -25,7 +25,7 @@ This project is not at all about ho to manage system element, it is only about c
 |        | ActiveMQ                   | RabbitMQ | Kafka                      |
 | ------ | -------------------------- | -------- | -------------------------- |
 | Java   | with Spring Sleuth and JMS |          | with Spring Sleuth and JMS |
-| NodeJS |                            |          |
+| NodeJS |                            |          | with KafkaJS               |
 | PHP    |                            |          |                            |
 
 - Message queue consumer
@@ -33,7 +33,7 @@ This project is not at all about ho to manage system element, it is only about c
 |        | ActiveMQ                   | RabbitMQ | Kafka                      |
 | ------ | -------------------------- | -------- | -------------------------- |
 | Java   | with Spring Sleuth and JMS |          | with Spring Sleuth and JMS |
-| NodeJS |                            |          |                            |
+| NodeJS |                            |          | with KafkaJS               |
 | PHP    |                            |          |                            |
 
 - Database
@@ -57,10 +57,10 @@ docker-compose -f _docker-compose/java-basic.yml up
 
 Services availables :
 
-| Service name        | URL                      |
-| ------------------- | ------------------------ |
-| zipkin              | http://p-nan-roseau:9411 |
-| java-basic-frontend | http://p-nan-roseau:8080 |
+| Service name        | URL                   |
+| ------------------- | --------------------- |
+| zipkin              | http://[MY_HOST]:9411 |
+| java-basic-frontend | http://[MY_HOST]:8080 |
 
 Calling _java-basic-frontend_ gets you a serialized date.
 This simple HTTP call is traced inside Zipkin.
@@ -77,11 +77,11 @@ docker-compose -f _docker-compose/java-resttemplate.yml up
 
 Services availables :
 
-| Service name               | URL                      |
-| -------------------------- | ------------------------ |
-| zipkin                     | http://p-nan-roseau:9411 |
-| java-basic-frontend        | http://p-nan-roseau:8081 |
-| java-resttemplate-frontend | http://p-nan-roseau:8080 |
+| Service name               | URL                   |
+| -------------------------- | --------------------- |
+| zipkin                     | http://[MY_HOST]:9411 |
+| java-basic-frontend        | http://[MY_HOST]:8081 |
+| java-resttemplate-frontend | http://[MY_HOST]:8080 |
 
 Calling _java-resttemplate-frontend_ will call _java-basic-frontend_.
 Then a serialized date is brought back from _java-basic-frontend_ to _java-resttemplate-frontend_ and then to user.
@@ -98,11 +98,11 @@ docker-compose -f _docker-compose/java-httpclient.yml up
 
 Services availables :
 
-| Service name             | URL                      |
-| ------------------------ | ------------------------ |
-| zipkin                   | http://p-nan-roseau:9411 |
-| java-basic-frontend      | http://p-nan-roseau:8081 |
-| java-httpclient-frontend | http://p-nan-roseau:8080 |
+| Service name             | URL                   |
+| ------------------------ | --------------------- |
+| zipkin                   | http://[MY_HOST]:9411 |
+| java-basic-frontend      | http://[MY_HOST]:8081 |
+| java-httpclient-frontend | http://[MY_HOST]:8080 |
 
 Only the implementation for the nested call is modified.
 Instead of using Spring's RestTemplate, Apache's HttpClient is used.
@@ -117,12 +117,12 @@ docker-compose -f _docker-compose/java-activemq.yml up
 
 Services availables :
 
-| Service name           | URL                      |
-| ---------------------- | ------------------------ |
-| zipkin                 | http://p-nan-roseau:9411 |
-| activemq               | http://p-nan-roseau:8161 |
-| java-activemq-frontend | http://p-nan-roseau:8080 |
-| java-activemq-consumer | not reachable            |
+| Service name           | URL                   |
+| ---------------------- | --------------------- |
+| zipkin                 | http://[MY_HOST]:9411 |
+| activemq               | http://[MY_HOST]:8161 |
+| java-activemq-frontend | http://[MY_HOST]:8080 |
+| java-activemq-consumer | not reachable         |
 
 Calling java-activemq-frontend will send a message onto the message queue.
 You can check that the message is correctly sent through ActiveMQ UI (default credentials : admin/admin).
@@ -142,13 +142,13 @@ docker-compose -f _docker-compose/java-activemq-multiple-consumers.yml up
 
 Services availables :
 
-| Service name             | URL                      |
-| ------------------------ | ------------------------ |
-| zipkin                   | http://p-nan-roseau:9411 |
-| activemq                 | http://p-nan-roseau:8161 |
-| java-activemq-frontend   | http://p-nan-roseau:8080 |
-| java-activemq-consumer-1 | not reachable            |
-| java-activemq-consumer-2 | not reachable            |
+| Service name             | URL                   |
+| ------------------------ | --------------------- |
+| zipkin                   | http://[MY_HOST]:9411 |
+| activemq                 | http://[MY_HOST]:8161 |
+| java-activemq-frontend   | http://[MY_HOST]:8080 |
+| java-activemq-consumer-1 | not reachable         |
+| java-activemq-consumer-2 | not reachable         |
 
 It would have been great to be able use _docker-compose scale_ to scale up (or down) _java-activemq-consumer_.
 But it does not seem to have a simple way to have container ID as environment variable (in order to change application name for demo's purpose).
@@ -163,17 +163,17 @@ docker-compose -f _docker-compose/java-kafka.yml up
 
 Services availables :
 
-| Service name                 | URL                      |
-| ---------------------------- | ------------------------ |
-| zipkin                       | http://p-nan-roseau:9411 |
-| kafka                        | not reachable            |
-| zookeeper (needed for kafka) | not reachable            |
-| java-activemq-frontend       | http://p-nan-roseau:8080 |
-| java-activemq-consumer       | not reachable            |
+| Service name                 | URL                   |
+| ---------------------------- | --------------------- |
+| zipkin                       | http://[MY_HOST]:9411 |
+| kafka                        | not reachable         |
+| zookeeper (needed for kafka) | not reachable         |
+| java-activemq-frontend       | http://[MY_HOST]:8080 |
+| java-activemq-consumer       | not reachable         |
 
-Calling java-kafka-frontend will send a message onto the message queue (topic is _topicBackend_).
+Calling _java-kafka-frontend_ will send a message onto the message queue (topic is _topicBackend_).
 Frontend service returns the raw Kafka result from the sending.
-A Java application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _backend_).
+A Java application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _my-java-consumer-group_).
 Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
@@ -189,10 +189,10 @@ docker-compose -f _docker-compose/nodejs-basic.yml up
 
 Services availables :
 
-| Service name          | URL                      |
-| --------------------- | ------------------------ |
-| zipkin                | http://p-nan-roseau:9411 |
-| nodejs-basic-frontend | http://p-nan-roseau:9000 |
+| Service name          | URL                   |
+| --------------------- | --------------------- |
+| zipkin                | http://[MY_HOST]:9411 |
+| nodejs-basic-frontend | http://[MY_HOST]:9000 |
 
 Calling _nodejs-basic-frontend_ gets you a serialized date.
 This simple HTTP call is traced inside Zipkin.
@@ -210,11 +210,11 @@ docker-compose -f _docker-compose/nodejs-axios.yml up
 
 Services availables :
 
-| Service name          | URL                      |
-| --------------------- | ------------------------ |
-| zipkin                | http://p-nan-roseau:9411 |
-| nodejs-basic-frontend | http://p-nan-roseau:9001 |
-| nodejs-axios-frontend | http://p-nan-roseau:9000 |
+| Service name          | URL                   |
+| --------------------- | --------------------- |
+| zipkin                | http://[MY_HOST]:9411 |
+| nodejs-basic-frontend | http://[MY_HOST]:9001 |
+| nodejs-axios-frontend | http://[MY_HOST]:9000 |
 
 Calling _nodejs-axios-frontend_ will call _nodejs-basic-frontend_.
 Then a serialized date is brought back from _nodejs-basic-frontend_ to _nodejs-axios-frontend_ and then to user.
@@ -223,11 +223,36 @@ The server acting as backend for the nested HTTP call is the one used in the _no
 
 Bonus, you can try the fibonacci endpoint to trigger latency :
 
-- http://p-nan-roseau:9000/fibonacci?count=40
+- http://[MY_HOST]:9000/fibonacci?count=40
+
+### NodeJS-kafka
+
+This demo illustrates how ZipkinJS can be used to decorated a KafkaJS client.
+
+```shell
+docker-compose -f _docker-compose/nodejs-kafkajs.yml up
+```
+
+Services availables :
+
+| Service name                 | URL                   |
+| ---------------------------- | --------------------- |
+| zipkin                       | http://[MY_HOST]:9411 |
+| kafka                        | not reachable         |
+| zookeeper (needed for kafka) | not reachable         |
+| nodejs-kafkajs-frontend      | http://[MY_HOST]:9000 |
+| nodejs-kafkajs-consumer      | not reachable         |
+
+Calling _nodejs-kafkajs-frontend_ will send a message onto the message queue (topic is _topicBackend_).
+Frontend service returns _OK_.
+A NodeJS application is defined to consume message from the queue (topic is _topicBackend_ and groupId is _my-nodejs-consumer-group_).
+Consumption is very simple, it will dump message on the standard output.
+Sending and consuming message are traced through Zipkin.
+For each call on _nodejs-kafkajs-frontend_, you should observe 4 spans : two for _nodejs-kafkajs-frontend_ endpoint and its sending to the queue and two for _nodejs-kafkajs-consumer_ message consumption.
 
 ## Documentation
 
 - introdution to distributed tracing : https://speakerdeck.com/adriancole/introduction-to-distributed-tracing-and-zipkin-at-devopsdays-singapore
 - example for Java Spring : https://github.com/openzipkin/sleuth-webmvc-example
-- tools and example for NodeJS : https://github.com/openzipkin/zipkin-js-example
+- tools and example for NodeJS (it contains multiple instrumentations) : https://github.com/openzipkin/zipkin-js-example
 - tools and example for PHP : https://github.com/openzipkin/zipkin-php

@@ -1,0 +1,20 @@
+{
+	"name": "nodejs-kafkajs-consumer",
+	"version": "0.0.1",
+	"main": "src/server.js",
+	"scripts": {
+		"start": "node src/server.js"
+	},
+	"dependencies": {
+		"kafkajs": "1.10.0",
+		"node-fetch": "2.6.0",
+		"zipkin": "0.19",
+		"zipkin-context-cls": "0.19",
+		"zipkin-instrumentation-express": "0.19",
+		"zipkin-instrumentation-kafkajs": "0.19.0",
+		"zipkin-transport-http": "0.19"
+	},
+	"devDependencies": {
+		"prettier": "1.18.2"
+	}
+}

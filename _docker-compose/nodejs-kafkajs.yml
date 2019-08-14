@@ -31,32 +31,35 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  java-kafkatemplate-frontend:
-    build: ../java-kafkatemplate-frontend
-    container_name: java-kafkatemplate-frontend
+  nodejs-kafkajs-frontend:
+    build: ../nodejs-kafkajs-frontend
+    container_name: nodejs-kafkajs-frontend
     environment:
-      - spring.application.name=Java KafkaTemplate frontend
-      - server.port=8080
-      - logging.level.fr=DEBUG
-      - spring.zipkin.baseUrl=http://zipkin:9411
-      - spring.kafka.bootstrap-servers=kafka:29092
-      - demo.kafkaTopic=topicBackend
+      - SERVICE_NAME=NodeJS KafkaJS frontend
+      - SERVER_PORT=9000
+      - DEBUG=true
+      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - KAFKA_TOPIC=topicBackend
+      - KAFKA_CLIENTID=my-producer
+      - KAFKA_BROKER_URL=kafka:29092
+      - KAFKA_REMOTE_SERVICE_NAME=kafka
     ports:
-      - "8080:8080"
+      - "9000:9000"
     depends_on:
       - zipkin
-      - kafka
 
-  java-kafkatemplate-consumer:
-    build: ../java-kafkatemplate-consumer
-    container_name: java-kafkatemplate-consumer
+  nodejs-kafkajs-consumer:
+    build: ../nodejs-kafkajs-consumer
+    container_name: nodejs-kafkajs-consumer
     environment:
-      - spring.application.name=Java KafkaTemplate consumer
-      - logging.level.fr=DEBUG
-      - spring.zipkin.baseUrl=http://zipkin:9411
-      - spring.kafka.bootstrap-servers=kafka:29092
-      - spring.kafka.consumer.group-id=my-java-consumer-group
-      - demo.kafkaTopic=topicBackend
+      - SERVICE_NAME=NodeJS KafkaJS consumer
+      - DEBUG=true
+      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - KAFKA_TOPIC=topicBackend
+      - KAFKA_CLIENTID=my-consumer
+      - KAFKA_BROKER_URL=kafka:29092
+      - KAFKA_REMOTE_SERVICE_NAME=kafka
+      - KAFKA_CONSUMER_GROUP_ID=my-nodejs-consumer-group
     depends_on:
       - zipkin
       - kafka
