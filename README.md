@@ -38,11 +38,11 @@ This project is not at all about ho to manage system element, it is only about c
 
 - Database
 
-|        | MySQL |
-| ------ | ----- |
-| Java   |       |
-| NodeJS |       |
-| PHP    |       |
+|        | MySQL      |
+| ------ | ---------- |
+| Java   | with P6Spy |
+| NodeJS |            |
+| PHP    |            |
 
 ## Demo
 
@@ -180,7 +180,7 @@ For each call on _java-kafka-frontend_, you should observe 4 spans : two for _ja
 
 ### Java-mysql
 
-This demo illustrates how p6spy is used through brave instrumentation to decorate JDBC datasource.
+This demo illustrates how P6Spy is used through brave instrumentation to decorate JDBC datasource.
 
 ```shell
 docker-compose -f _docker-compose/java-mysql.yml up
@@ -206,6 +206,13 @@ In Zipkin UI, calls to database are traced and you can witness how many database
 Calling _java-mysql-frontend_ with a GET will trigger only one JDBC call in order to fetch customers.
 
 For each traced database call, we can check which DB query is made wit its parameter.
+
+Interesting thing to notice is how little you have to project to make it work with P6Spy, no need to change code:
+
+- change JDBC driver
+- change JDBC URL
+- add a property file for P6Spy
+- add P6Spy Maven dependency
 
 ### NodeJS-basic
 
