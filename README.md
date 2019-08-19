@@ -178,6 +178,35 @@ Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
 
+### Java-mysql
+
+This demo illustrates how p6spy is used through brave instrumentation to decorate JDBC datasource.
+
+```shell
+docker-compose -f _docker-compose/java-mysql.yml up
+```
+
+Services availables :
+
+| Service name        | URL                                               |
+| ------------------- | ------------------------------------------------- |
+| zipkin              | http://[MY_HOST]:9411                             |
+| mysql               | port 3306 is accessible                           |
+| adminer             | http://[MY_HOST]:8081 (for demo only, not needed) |
+| java-mysql-frontend | http://[MY_HOST]:8080                             |
+
+Application _java-mysql-frontend_ offers 2 endpoint :
+
+- GET / : will retrieve customers from database
+- POST / : will create customers into database
+
+Calling _java-mysql-frontend_ with a POST will trigger mulitple JDBC call in order to insert 5 new customers.
+In Zipkin UI, calls to database are traced and you can witness how many database calls are made (especially those for the hibernate sequence).
+
+Calling _java-mysql-frontend_ with a GET will trigger only one JDBC call in order to fetch customers.
+
+For each traced database call, we can check which DB query is made wit its parameter.
+
 ### NodeJS-basic
 
 This demo illustrates the simpliest use case : a NodeJS application acting as a web server (_express_).
@@ -256,3 +285,7 @@ For each call on _nodejs-kafkajs-frontend_, you should observe 4 spans : two for
 - example for Java Spring : https://github.com/openzipkin/sleuth-webmvc-example
 - tools and example for NodeJS (it contains multiple instrumentations) : https://github.com/openzipkin/zipkin-js-example
 - tools and example for PHP : https://github.com/openzipkin/zipkin-php
+
+## TODO
+
+- plug nginx with zipkin : https://medium.com/opentracing/how-to-enable-nginx-for-distributed-tracing-9479df18b22c
