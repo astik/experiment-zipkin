@@ -178,12 +178,12 @@ Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
 
-### Java-mysql
+### Java-mysqlp6spy
 
 This demo illustrates how P6Spy is used through brave instrumentation to decorate JDBC datasource.
 
 ```shell
-docker-compose -f _docker-compose/java-mysql.yml up
+docker-compose -f _docker-compose/java-mysqlp6spy.yml up
 ```
 
 Services availables :
