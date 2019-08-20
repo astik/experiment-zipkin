@@ -38,11 +38,12 @@ This project is not at all about ho to manage system element, it is only about c
 
 - Database
 
-|        | MySQL      |
-| ------ | ---------- |
-| Java   | with P6Spy |
-| NodeJS |            |
-| PHP    |            |
+|        | MySQL                   |
+| ------ | ----------------------- |
+| Java   | with P6Spy              |
+|        | with Driver interceptor |
+| NodeJS |                         |
+| PHP    |                         |
 
 ## Demo
 
@@ -178,7 +179,9 @@ Consumption is very simple, it will dump message on the standard output.
 Sending and consuming message are traced through Zipkin.
 For each call on _java-kafka-frontend_, you should observe 4 spans : two for _java-kafka-frontend_ endpoint and its sending to the queue and two for _java-kafka-consumer_ message consumption.
 
-### Java-mysqlp6spy
+### MySQL
+
+#### Java-mysqlp6spy
 
 This demo illustrates how P6Spy is used through brave instrumentation to decorate JDBC datasource.
 
@@ -207,12 +210,41 @@ Calling _java-mysql-frontend_ with a GET will trigger only one JDBC call in orde
 
 For each traced database call, we can check which DB query is made wit its parameter.
 
-Interesting thing to notice is how little you have to project to make it work with P6Spy, no need to change code:
+Interesting thing to notice is how little you have to change the project to make it work with P6Spy, no need to change code:
 
 - change JDBC driver
 - change JDBC URL
 - add a property file for P6Spy
 - add P6Spy Maven dependency
+
+#### Java-mysqlinstrumentation
+
+This demo illustrates how brave instrumentation decorates JDBC driver interceptors.
+
+```shell
+docker-compose -f _docker-compose/java-mysqlinstrumentation.yml up
+```
+
+This demo is the same as the _java-mysqlp6spy_ one.
+
+Services availables :
+
+| Service name        | URL                                               |
+| ------------------- | ------------------------------------------------- |
+| zipkin              | http://[MY_HOST]:9411                             |
+| mysql               | port 3306 is accessible                           |
+| adminer             | http://[MY_HOST]:8081 (for demo only, not needed) |
+| java-mysql-frontend | http://[MY_HOST]:8080                             |
+
+Interesting thing to notice is how little you have to change the project to make it work with P6Spy, no need to change code:
+
+- add parameter to JDBC URL
+- add _brave-instrumentation_ Maven dependency
+
+Difference between P6Spy and driver interceptor is the level of tracing :
+
+- P6Spy wrap the driver and traces what goes out of it
+- Driver interceptor traces what is happening inside the driver
 
 ### NodeJS-basic
 
