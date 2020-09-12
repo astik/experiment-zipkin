@@ -8,7 +8,7 @@
 	"dependencies": {
 		"express": "4.17",
 		"kafkajs": "1.10.0",
-		"node-fetch": "2.6.0",
+		"node-fetch": "2.6.1",
 		"zipkin": "0.19",
 		"zipkin-context-cls": "0.19",
 		"zipkin-instrumentation-express": "0.19",
